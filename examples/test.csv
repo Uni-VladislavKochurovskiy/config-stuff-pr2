@@ -1,0 +1,6 @@
+package,A
+repository,examples/repository.csv
+test_mode,true
+output_file,bin/test.svg
+ascii_tree,true
+filter,

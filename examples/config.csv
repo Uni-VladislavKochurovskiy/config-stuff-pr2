@@ -1,0 +1,6 @@
+package,requests
+repository,https://pypi.org
+test_mode,false
+output_file,bin/dependencies.svg
+ascii_tree,false
+filter,
