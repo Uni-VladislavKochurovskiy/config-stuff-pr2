@@ -19,15 +19,28 @@ main :: proc() {
 		fmt.eprintln(config.ERROR_STRING[err])
 		os.exit(1)
 	}
-	dependencies, graph_error := graph.build(cfg)
+	dependencies: graph.Graph
+	graph_error: graph.Error
+	when #config(REVERSE, false) {
+		dependencies, graph_error = graph.build_reverse(cfg)
+	} else {
+		dependencies, graph_error = graph.build(cfg)
+	}
 	if graph_error != .None {
 		fmt.eprintln(graph.ERROR_STRING[graph_error])
 		os.exit(1)
 	}
+	when #config(REVERSE, false) {
+		for name, index in dependencies.order {
+			if index != 0 {fmt.println(name)}
+		}
+	} else {
 	for name in dependencies.order {
 		node := dependencies.nodes[name]
 		fmt.printf("%s:", name)
 		for dependency in node.dependencies {fmt.printf(" %s", dependency)}
 		fmt.println()
 	}
+}
+
 }

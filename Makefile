@@ -27,3 +27,14 @@ demo-errors: build
 .PHONY: demo-graphs
 demo-graphs: build
 	bash tests/demo_graphs.sh
+
+.PHONY: build-reverse reverse demo-reverse
+build-reverse:
+	mkdir -p bin
+	$(ODIN) build src -define:REVERSE=true -out:bin/gravel-reverse
+
+reverse: build-reverse
+	./bin/gravel-reverse "$(CONFIG)"
+
+demo-reverse: build-reverse
+	bash tests/demo_reverse.sh
