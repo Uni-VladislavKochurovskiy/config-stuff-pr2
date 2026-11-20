@@ -1,7 +1,7 @@
 package main
 
 import "config"
-import "repository"
+import "graph"
 import "core:fmt"
 import "core:os"
 
@@ -19,17 +19,15 @@ main :: proc() {
 		fmt.eprintln(config.ERROR_STRING[err])
 		os.exit(1)
 	}
-	if cfg.test_mode {
-		fmt.eprintln("repository: stage 2 requires an HTTP(S) repository")
+	dependencies, graph_error := graph.build(cfg)
+	if graph_error != .None {
+		fmt.eprintln(graph.ERROR_STRING[graph_error])
 		os.exit(1)
 	}
-	metadata, repository_error := repository.fetch(cfg.repository, cfg.package_name)
-	if repository_error != .None {
-		fmt.eprintln(repository.ERROR_STRING[repository_error])
-		os.exit(1)
-	}
-	fmt.printf("%s==%s\n", metadata.name, metadata.version)
-	for dependency in metadata.dependencies {
-		fmt.println(dependency.requirement)
+	for name in dependencies.order {
+		node := dependencies.nodes[name]
+		fmt.printf("%s:", name)
+		for dependency in node.dependencies {fmt.printf(" %s", dependency)}
+		fmt.println()
 	}
 }

@@ -16,7 +16,7 @@ sed -e 's/package,requests/package,root/' \
     -e "s|https://pypi.org|http://127.0.0.1:$port|" \
     examples/config.csv > "$tmp/config.csv"
 "$binary" "$tmp/config.csv" > "$tmp/actual"
-printf 'root==1.0\nChild>=1\n' > "$tmp/expected"
+printf 'root: child\nchild:\n' > "$tmp/expected"
 diff -u "$tmp/expected" "$tmp/actual"
 "$binary" --help > "$tmp/help"
 

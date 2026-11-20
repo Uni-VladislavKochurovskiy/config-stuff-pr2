@@ -23,3 +23,7 @@ clean:
 .PHONY: demo-errors
 demo-errors: build
 	bash tests/demo_errors.sh
+
+.PHONY: demo-graphs
+demo-graphs: build
+	bash tests/demo_graphs.sh
