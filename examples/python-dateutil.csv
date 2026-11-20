@@ -1,0 +1,6 @@
+package,python-dateutil
+repository,https://pypi.org
+test_mode,false
+output_file,bin/python-dateutil.svg
+ascii_tree,true
+filter,

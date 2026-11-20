@@ -1,0 +1,6 @@
+package,typing-inspection
+repository,https://pypi.org
+test_mode,false
+output_file,bin/typing-inspection.svg
+ascii_tree,true
+filter,

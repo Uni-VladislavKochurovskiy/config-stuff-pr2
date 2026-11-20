@@ -1,0 +1,6 @@
+package,click
+repository,https://pypi.org
+test_mode,false
+output_file,bin/click.svg
+ascii_tree,true
+filter,

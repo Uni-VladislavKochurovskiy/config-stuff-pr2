@@ -2,6 +2,7 @@ package main
 
 import "config"
 import "graph"
+import "visualization"
 import "core:fmt"
 import "core:os"
 
@@ -35,12 +36,12 @@ main :: proc() {
 			if index != 0 {fmt.println(name)}
 		}
 	} else {
-	for name in dependencies.order {
-		node := dependencies.nodes[name]
-		fmt.printf("%s:", name)
-		for dependency in node.dependencies {fmt.printf(" %s", dependency)}
-		fmt.println()
+		visualization_error := visualization.save(dependencies, cfg.output_file)
+		if visualization_error != .None {
+			fmt.eprintln(visualization.ERROR_STRING[visualization_error])
+			os.exit(1)
+		}
+		if cfg.ascii_tree {fmt.print(visualization.to_ascii(dependencies))}
+		fmt.printf("SVG: %s\n", cfg.output_file)
 	}
-}
-
 }

@@ -3,6 +3,7 @@ package graph
 import "../config"
 import "../repository"
 import "core:encoding/csv"
+import "core:fmt"
 import "core:os"
 import "core:slice"
 import "core:strings"
@@ -86,7 +87,10 @@ get_node :: proc(source: ^Source, name: string) -> (Node, Error) {
 		return node, .None
 	}
 	metadata, err := repository.fetch(source.url, name)
-	if err != .None {return {}, .Fetch_Failed}
+	if err != .None {
+		fmt.eprintf("%s: %s\n", name, repository.ERROR_STRING[err])
+		return {}, .Fetch_Failed
+	}
 	node := Node{version = metadata.version}
 	for dependency in metadata.dependencies {append_unique(&node.dependencies, dependency.name)}
 	slice.sort(node.dependencies[:])

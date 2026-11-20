@@ -1,4 +1,4 @@
-package,requests
+package,python-dateutil
 repository,https://pypi.org
 test_mode,false
 output_file,bin/dependencies.svg

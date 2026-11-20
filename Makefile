@@ -10,7 +10,7 @@ build:
 run: build
 	./$(BINARY) "$(CONFIG)"
 
-test: build
+test: build build-reverse
 	$(ODIN) test tests -out:bin/tests
 	bash tests/cli.sh
 
@@ -38,3 +38,11 @@ reverse: build-reverse
 
 demo-reverse: build-reverse
 	bash tests/demo_reverse.sh
+
+.PHONY: demo-packages
+demo-packages: build
+	bash tests/demo_packages.sh
+
+.PHONY: compare
+compare: build
+	bash tests/compare.sh
