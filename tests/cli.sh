@@ -2,20 +2,22 @@
 set -euo pipefail
 
 binary=./bin/gravel
-tmp=$(mktemp -d)
-trap 'rm -rf "$tmp"' EXIT
-
-"$binary" examples/config.csv > "$tmp/actual"
-cat > "$tmp/expected" <<'EXPECTED'
-package=requests
-repository=https://pypi.org
-test_mode=false
-output_file=bin/dependencies.svg
-ascii_tree=false
-filter=
-EXPECTED
+tmp=$(mktemp -d bin/cli.XXXXXX)
+python3 tests/serve.py "$tmp/port" > "$tmp/server.log" 2>&1 &
+server=$!
+trap 'kill "$server" 2>/dev/null || true; wait "$server" 2>/dev/null || true; rm -rf "$tmp"' EXIT
+for attempt in {1..100}; do
+    test -s "$tmp/port" && break
+    kill -0 "$server"
+    sleep 0.05
+done
+port=$(cat "$tmp/port")
+sed -e 's/package,requests/package,root/' \
+    -e "s|https://pypi.org|http://127.0.0.1:$port|" \
+    examples/config.csv > "$tmp/config.csv"
+"$binary" "$tmp/config.csv" > "$tmp/actual"
+printf 'root==1.0\nChild>=1\n' > "$tmp/expected"
 diff -u "$tmp/expected" "$tmp/actual"
-"$binary" examples/test.csv > "$tmp/test"
 "$binary" --help > "$tmp/help"
 
 for case in no_args missing_file invalid_value; do

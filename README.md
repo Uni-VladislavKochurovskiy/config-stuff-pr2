@@ -2,21 +2,16 @@
 
 Практическая работа #2. Язык реализации: [Odin](https://odin-lang.org/)
 
-1. gravel читает настройки из CSV, проверяет их и выводит в формате
-   `ключ=значение`
-2. ...
-3. ...
-4. ...
-5. ...
+gravel получает прямые зависимости Python-пакета из метаданных PyPI JSON API.
+Настройки читаются из CSV. Ошибки выводятся в stderr, код завершения - 1.
 
 ## Сборка и запуск
 
-Нужны Odin, GNU Make и Bash. Тестировалось на Fedora 43 и CachyOS 7.3.3-1. Команды выполняются из корня репозитория:
+Нужны Odin, GNU Make, Bash и curl. Для тестов нужен Python 3. Тестировалось на Fedora 43 и CachyOS 7.3.3-1. Команды выполняются из корня репозитория:
 
 ```sh
 make build                               # build bin/gravel
 make run                                 # run with examples/config.csv
-make run CONFIG=examples/test.csv        # run with another configuration
 make check                               # check source code
 make test                                # configuration and CLI tests
 make demo-errors                         # validation error examples
@@ -54,7 +49,9 @@ ascii_tree,false
 filter,
 ```
 
-Настройки только проверяются и выводятся: сетевых запросов, чтения связей тестового графа и создания SVG нет.
+Источник должен предоставлять `/pypi/<имя>/json`, как `https://pypi.org`.
+Выводятся все записи `Requires-Dist`, включая условия и extras.
+Тестовый режим на этом этапе не используется.
 
 ## Код
 
@@ -70,3 +67,10 @@ filter,
 
 Ошибки представлены типом `Error`, сообщения для CLI - мапой `ERROR_STRING`
 в `src/config/errors.odin`.
+
+В `src/repository/repository.odin`: `fetch` скачивает метаданные через curl,
+`parse_metadata` разбирает JSON, `parse_requirement` извлекает имя зависимости,
+`normalize` приводит имена пакетов к каноническому виду.
+
+Форматы: [PyPI JSON API](https://docs.pypi.org/api/json/),
+[Requires-Dist](https://packaging.python.org/en/latest/specifications/core-metadata/#requires-dist-multiple-use).
